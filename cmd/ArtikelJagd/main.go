@@ -1,52 +1,61 @@
 package main
 
 import (
-	"image/color"
 	"log"
 
+	component "github.com/RheinhardtSnyman/ArtikelJagd/internal/components"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
-type Game struct{}
-
-var img *ebiten.Image
+type Game struct {
+	components []component.Component
+}
 
 func (g *Game) Update() error {
 	return nil
 }
 
-func (g *Game) Draw(screen *ebiten.Image) {
-	deskH := 100
-
-	border := ebiten.NewImage(screen.Bounds().Dx(), screen.Bounds().Dy())
-	border.Fill(color.RGBA{0x80, 0x57, 0x2e, 0xff})
-
-	// screen.DrawImage(img, nil)
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(0, float64(screen.Bounds().Dy()-deskH))
-	opb := &ebiten.DrawImageOptions{}
-	opb.GeoM.Translate(0, float64(screen.Bounds().Dy()-4-deskH))
-
-	screen.DrawImage(border, opb)
-	screen.DrawImage(img, op)
+func (game *Game) Draw(screen *ebiten.Image) {
+	for _, component := range game.components {
+		if err := component.Draw(screen); err != nil {
+			log.Fatal(err)
+		}
+	}
 }
 
-func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return 320, 240
+func (g *Game) Layout(x, y int) (screenWidth, screenHeight int) {
+	return x, y
 }
 
 func main() {
-	ebiten.SetWindowSize(800, 480)
-	ebiten.SetWindowTitle("Hello, World!")
-
-	var err error
-	img, _, err = ebitenutil.NewImageFromFile("./assets/images/Stall/bg_wood.png")
-	if err != nil {
-		log.Fatal(err)
+	game := NewGame()
+	if err := game.Run(); err != nil {
+		log.Fatalf("Game error: %v", err)
 	}
+}
+
+func NewGame() *Game {
+	ebiten.SetWindowSize(800, 480)
+	ebiten.SetWindowTitle("ArtikelJagd")
+
+	// game := &Game{
+	// 	components: []component.Component{
+	// 		component.NewTable(),
+	// 	},
+	// }
+	game := &Game{}
+	game.components = []component.Component{
+		component.NewTable(),
+	}
+
+	return game
+}
+
+func (game *Game) Run() error {
 
 	if err := ebiten.RunGame(&Game{}); err != nil {
 		log.Fatal(err)
 	}
+
+	return nil
 }
