@@ -7,5 +7,3 @@ type Component interface {
 	Draw(*ebiten.Image) error
 	OnScreen() bool
 }
-
-type direction int

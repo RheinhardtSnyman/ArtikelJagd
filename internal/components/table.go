@@ -1,6 +1,7 @@
 package component
 
 import (
+	"image/color"
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -27,10 +28,25 @@ func NewTable() Component {
 
 }
 
-func (table *table) Draw(trgt *ebiten.Image) error {
+func (table *table) Draw(screen *ebiten.Image) error {
+	defaultY := 120
+	screenX := float64(screen.Bounds().Dx())
+	tableY := float64(screen.Bounds().Dy() - defaultY)
+	defaultBorder := 4
 
+	// Table border - first
+	border := ebiten.NewImage(screen.Bounds().Dx(), screen.Bounds().Dy())
+	border.Fill(color.RGBA{0x80, 0x57, 0x2e, 0xff})
 	options := &ebiten.DrawImageOptions{}
-	trgt.DrawImage(table.img, options)
+	options.GeoM.Translate(0, tableY-float64(defaultBorder))
+	screen.DrawImage(border, options)
+
+	// Table - ontop of border
+	for x := 0.0; x < screenX; x += table.x {
+		options := &ebiten.DrawImageOptions{}
+		options.GeoM.Translate(x, tableY)
+		screen.DrawImage(table.img, options)
+	}
 
 	return nil
 }

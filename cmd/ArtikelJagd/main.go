@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	component "github.com/RheinhardtSnyman/ArtikelJagd/internal/components"
@@ -10,6 +11,12 @@ import (
 type Game struct {
 	components []component.Component
 }
+
+const (
+	north = iota
+	east
+	west
+)
 
 func (g *Game) Update() error {
 	return nil
@@ -28,32 +35,38 @@ func (g *Game) Layout(x, y int) (screenWidth, screenHeight int) {
 }
 
 func main() {
-	game := NewGame()
+	game := Start()
 	if err := game.Run(); err != nil {
 		log.Fatalf("Game error: %v", err)
 	}
 }
 
-func NewGame() *Game {
+func Start() *Game {
+
+	fmt.Println("Starting")
+
 	ebiten.SetWindowSize(800, 480)
 	ebiten.SetWindowTitle("ArtikelJagd")
 
-	// game := &Game{
-	// 	components: []component.Component{
-	// 		component.NewTable(),
-	// 	},
-	// }
-	game := &Game{}
-	game.components = []component.Component{
-		component.NewTable(),
+	game := &Game{
+		components: []component.Component{
+			component.NewTable(),
+			component.NewCurtain(east),
+			component.NewCurtain(west),
+			component.NewCurtain(north),
+		},
 	}
+	// game := &Game{}
+	// game.components = []component.Component{
+	// 	component.NewTable(),
+	// }
 
 	return game
 }
 
 func (game *Game) Run() error {
 
-	if err := ebiten.RunGame(&Game{}); err != nil {
+	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)
 	}
 
