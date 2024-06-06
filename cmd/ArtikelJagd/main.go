@@ -50,6 +50,7 @@ func Start() *Game {
 
 	game := &Game{
 		components: []component.Component{
+			component.NewBackground(),
 			component.NewTable(),
 			component.NewCurtain(east),
 			component.NewCurtain(west),
