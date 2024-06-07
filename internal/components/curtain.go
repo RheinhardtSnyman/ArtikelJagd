@@ -49,6 +49,7 @@ func NewCurtain(direction direction) Component {
 }
 
 func (curtain *curtain) Draw(screen *ebiten.Image) error {
+	defaultY := 60.0
 	direction := curtain.direction
 	screenX := float64(screen.Bounds().Dx())
 	options := &ebiten.DrawImageOptions{}
@@ -63,9 +64,9 @@ func (curtain *curtain) Draw(screen *ebiten.Image) error {
 		return nil
 	case east:
 		options.GeoM.Scale(-1, 1)
-		options.GeoM.Translate(screenX, 0)
+		options.GeoM.Translate(screenX, defaultY)
 	case west:
-		options.GeoM.Translate(0, 0)
+		options.GeoM.Translate(0, defaultY)
 	}
 
 	screen.DrawImage(curtain.img, options)
@@ -73,7 +74,7 @@ func (curtain *curtain) Draw(screen *ebiten.Image) error {
 	return nil
 }
 
-func (d *curtain) Update(_ *ebiten.Image, _ uint) error {
+func (d *curtain) Update(_ int) error {
 	return nil
 }
 

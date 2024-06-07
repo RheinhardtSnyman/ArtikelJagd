@@ -51,10 +51,10 @@ func (table *table) Draw(screen *ebiten.Image) error {
 	return nil
 }
 
-func (d *table) Update(_ *ebiten.Image, _ uint) error {
+func (table *table) Update(_ int) error {
 	return nil
 }
 
-func (d *table) OnScreen() bool {
+func (table *table) OnScreen() bool {
 	return true
 }

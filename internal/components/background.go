@@ -14,7 +14,7 @@ type background struct {
 }
 
 func NewBackground() Component {
-	img, _, err := ebitenutil.NewImageFromFile("./assets/images/Stall/bg_blue.png")
+	img, _, err := ebitenutil.NewImageFromFile("./assets/images/Stall/bg_green.png")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -41,7 +41,7 @@ func (background *background) Draw(screen *ebiten.Image) error {
 	return nil
 }
 
-func (d *background) Update(_ *ebiten.Image, _ uint) error {
+func (d *background) Update(_ int) error {
 	return nil
 }
 

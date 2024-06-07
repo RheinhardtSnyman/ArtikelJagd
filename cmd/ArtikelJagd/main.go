@@ -10,6 +10,7 @@ import (
 
 type Game struct {
 	components []component.Component
+	tick       int
 }
 
 const (
@@ -18,7 +19,19 @@ const (
 	west
 )
 
-func (g *Game) Update() error {
+func (game *Game) Update() error {
+	if game.tick < 800 {
+		game.tick++
+	} else {
+		game.tick = 0
+	}
+
+	for _, component := range game.components {
+		if err := component.Update(game.tick); err != nil {
+			log.Fatal(err)
+		}
+	}
+
 	return nil
 }
 
@@ -45,22 +58,21 @@ func Start() *Game {
 
 	fmt.Println("Starting")
 
-	ebiten.SetWindowSize(800, 480)
+	ebiten.SetWindowSize(800, 580)
 	ebiten.SetWindowTitle("ArtikelJagd")
 
 	game := &Game{
 		components: []component.Component{
 			component.NewBackground(),
+			component.NewWave(true, "water2", 60, 0.3, -1, 210, 0.15, 25),
+			component.NewWave(false, "water1"),
 			component.NewTable(),
 			component.NewCurtain(east),
 			component.NewCurtain(west),
 			component.NewCurtain(north),
 		},
+		tick: 0,
 	}
-	// game := &Game{}
-	// game.components = []component.Component{
-	// 	component.NewTable(),
-	// }
 
 	return game
 }
