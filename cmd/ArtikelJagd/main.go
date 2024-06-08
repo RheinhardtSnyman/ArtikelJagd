@@ -64,12 +64,13 @@ func Start() *Game {
 	game := &Game{
 		components: []component.Component{
 			component.NewBackground(),
-			component.NewWave(true, "water2", 60, 0.3, -1, 210, 0.15, 25),
+			component.NewWave(true, "water2", 60, 0.4, -1, 210, 0.15, 25),
 			component.NewWave(false, "water1"),
 			component.NewTable(),
 			component.NewCurtain(east),
 			component.NewCurtain(west),
 			component.NewCurtain(north),
+			component.NewfloatyWord(),
 		},
 		tick: 0,
 	}

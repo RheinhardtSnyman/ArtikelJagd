@@ -14,8 +14,6 @@ type animate struct {
 	dirForward bool
 }
 
-const oneway = true
-
 type wave struct {
 	img   *ebiten.Image
 	x     float64
@@ -93,7 +91,7 @@ func (wave *wave) Draw(screen *ebiten.Image) error {
 
 func (wave *wave) Update(tick int) error {
 
-	if wave.aniDr == oneway {
+	if wave.aniDr {
 		if wave.aniX.tick >= wave.x {
 			wave.aniX.tick = 0
 		}
