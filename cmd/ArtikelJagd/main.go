@@ -70,7 +70,7 @@ func Start() *Game {
 			component.NewCurtain(east),
 			component.NewCurtain(west),
 			component.NewCurtain(north),
-			component.NewfloatyWord(),
+			component.NewfloatyWord(800, 30),
 		},
 		tick: 0,
 	}
