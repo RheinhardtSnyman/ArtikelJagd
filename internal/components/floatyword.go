@@ -23,20 +23,15 @@ type word struct {
 	fontSize float64
 }
 
-type animation struct {
-	tick       float64
-	speed      float64
-	changeSize float64
-	dirForward bool
-}
-
 type floatyWord struct {
-	img  image
-	word word
-	aniX animation
-	aniY animation
-	x    float64
-	y    float64
+	img   image
+	word  word
+	aniX  animation
+	aniY  animation
+	x     float64
+	y     float64
+	show  bool
+	score int
 }
 
 var faceSource *text.GoTextFaceSource
@@ -63,7 +58,7 @@ func getRandom(min, max int) float64 {
 
 func NewfloatyWord(aniX, aniY float64) Component {
 
-	img, _, err := ebitenutil.NewImageFromFile("./assets/images/Stall/cloud1.png")
+	img, _, err := ebitenutil.NewImageFromFile("./assets/images/Stall/cloud2.png")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -82,16 +77,18 @@ func NewfloatyWord(aniX, aniY float64) Component {
 			tick:       0.0,
 			speed:      1.0,
 			changeSize: aniX,
-			dirForward: true,
+			direction:  forward,
 		},
 		aniY: animation{
 			tick:       0.0,
 			speed:      0.1,
 			changeSize: aniY,
-			dirForward: true,
+			direction:  forward,
 		},
-		x: -float64(img.Bounds().Dx()),
-		y: getRandom(minY, maxY),
+		x:     -float64(img.Bounds().Dx()),
+		y:     getRandom(minY, maxY),
+		show:  true,
+		score: 0,
 	}
 
 }
@@ -143,24 +140,37 @@ func (floatyWord *floatyWord) Update(tick int) error {
 	floatyWord.x += floatyWord.aniX.speed
 
 	if floatyWord.aniY.changeSize > 0 {
-		if floatyWord.aniY.tick < floatyWord.aniY.changeSize && floatyWord.aniY.dirForward {
-			floatyWord.y += floatyWord.aniY.speed
-			floatyWord.aniY.tick += floatyWord.aniY.speed
-		} else {
-			floatyWord.aniY.dirForward = false
-		}
+		floatyWord.y += floatyWord.aniY.speed * float64(floatyWord.aniY.direction)
+		floatyWord.aniY.tick += floatyWord.aniY.speed * float64(floatyWord.aniY.direction)
 
-		if floatyWord.aniY.tick > 0 && !floatyWord.aniY.dirForward {
-			floatyWord.y -= floatyWord.aniY.speed
-			floatyWord.aniY.tick -= floatyWord.aniY.speed
-		} else {
-			floatyWord.aniY.dirForward = true
+		if floatyWord.aniY.tick >= floatyWord.aniY.changeSize && floatyWord.aniY.direction == forward {
+			changeDirection(&floatyWord.aniY)
+		} else if floatyWord.aniY.tick < 0 && floatyWord.aniY.direction == backwards {
+			changeDirection(&floatyWord.aniY)
 		}
+	}
 
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+		shot(floatyWord)
 	}
 
 	return nil
 }
+
+func shot(floatyWord *floatyWord) {
+	minX := floatyWord.x
+	maxX := minX + floatyWord.img.x
+	minY := floatyWord.y
+	maxY := minY + floatyWord.img.y
+
+	x, y := ebiten.CursorPosition()
+
+	if x > int(minX) && x < int(maxX) && y > int(minY) && y < int(maxY) {
+		floatyWord.show = false
+	}
+
+}
+
 func (floatyWord floatyWord) OnScreen() bool {
-	return true
+	return floatyWord.show
 }

@@ -14,8 +14,6 @@ type curtain struct {
 	direction direction
 }
 
-type direction int
-
 const (
 	north direction = iota
 	east
@@ -74,10 +72,10 @@ func (curtain *curtain) Draw(screen *ebiten.Image) error {
 	return nil
 }
 
-func (d *curtain) Update(_ int) error {
+func (curtain *curtain) Update(_ int) error {
 	return nil
 }
 
-func (d *curtain) OnScreen() bool {
+func (curtain *curtain) OnScreen() bool {
 	return true
 }

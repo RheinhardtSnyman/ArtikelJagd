@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"slices"
 
 	component "github.com/RheinhardtSnyman/ArtikelJagd/internal/components"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -10,7 +11,7 @@ import (
 
 type Game struct {
 	components []component.Component
-	tick       int
+	score      int
 }
 
 const (
@@ -20,15 +21,15 @@ const (
 )
 
 func (game *Game) Update() error {
-	if game.tick < 800 {
-		game.tick++
-	} else {
-		game.tick = 0
-	}
-
-	for _, component := range game.components {
-		if err := component.Update(game.tick); err != nil {
+	for idx, cmpt := range game.components {
+		if err := cmpt.Update(game.score); err != nil {
 			log.Fatal(err)
+		}
+
+		if !cmpt.OnScreen() {
+			game.components = append(game.components[:idx], game.components[idx+1:]...)
+			game.score++
+			game.components = slices.Insert(game.components, 2, component.NewfloatyWord(800, 30))
 		}
 	}
 
@@ -65,14 +66,15 @@ func Start() *Game {
 		components: []component.Component{
 			component.NewBackground(),
 			component.NewWave(true, "water2", 60, 0.4, -1, 210, 0.15, 25),
+			component.NewfloatyWord(800, 30),
 			component.NewWave(false, "water1"),
 			component.NewTable(),
 			component.NewCurtain(east),
 			component.NewCurtain(west),
 			component.NewCurtain(north),
-			component.NewfloatyWord(800, 30),
+			component.NewCrosshair(),
 		},
-		tick: 0,
+		score: 0,
 	}
 
 	return game

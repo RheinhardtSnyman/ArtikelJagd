@@ -7,13 +7,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
-type animate struct {
-	tick       float64
-	speed      float64
-	changeSize float64
-	dirForward bool
-}
-
 type wave struct {
 	img   *ebiten.Image
 	x     float64
@@ -21,8 +14,8 @@ type wave struct {
 	posX  float64
 	posY  float64
 	aniDr bool
-	aniX  animate
-	aniY  animate
+	aniX  animation
+	aniY  animation
 }
 
 func NewWave(onewayAniX bool, waveName string, optXY ...float64) Component {
@@ -33,18 +26,18 @@ func NewWave(onewayAniX bool, waveName string, optXY ...float64) Component {
 
 	// defaults
 	posX := 0.0
-	aniX := animate{
+	aniX := animation{
 		tick:       0,
 		speed:      0.2,
 		changeSize: 32,
-		dirForward: true,
+		direction:  forward,
 	}
 	posY := 200.0
-	aniY := animate{
+	aniY := animation{
 		tick:       0,
 		speed:      0.1,
 		changeSize: 8,
-		dirForward: true,
+		direction:  forward,
 	}
 
 	// optXY override default
@@ -104,17 +97,12 @@ func (wave *wave) Update(tick int) error {
 	return nil
 }
 
-func aniUpDownCntr(ani *animate) {
-	if ani.dirForward {
-		ani.tick += ani.speed
-		if ani.tick >= ani.changeSize {
-			ani.dirForward = false
-		}
-	} else {
-		ani.tick -= ani.speed
-		if ani.tick <= 0 {
-			ani.dirForward = true
-		}
+func aniUpDownCntr(ani *animation) {
+	ani.tick += ani.speed * float64(ani.direction)
+	if ani.direction == forward && ani.tick >= ani.changeSize {
+		changeDirection(ani)
+	} else if ani.direction == backwards && ani.tick <= 0 {
+		changeDirection(ani)
 	}
 }
 
