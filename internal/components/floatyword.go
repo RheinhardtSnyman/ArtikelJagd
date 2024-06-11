@@ -31,7 +31,7 @@ type floatyWord struct {
 	x     float64
 	y     float64
 	show  bool
-	score int
+	score *int
 }
 
 var faceSource *text.GoTextFaceSource
@@ -56,7 +56,7 @@ func getRandom(min, max int) float64 {
 	return float64(rand.Intn(max-min) + min)
 }
 
-func NewfloatyWord(aniX, aniY float64) Component {
+func NewfloatyWord(score *int, aniX, aniY float64) Component {
 
 	img, _, err := ebitenutil.NewImageFromFile("./assets/images/Stall/cloud2.png")
 	if err != nil {
@@ -88,7 +88,7 @@ func NewfloatyWord(aniX, aniY float64) Component {
 		x:     -float64(img.Bounds().Dx()),
 		y:     getRandom(minY, maxY),
 		show:  true,
-		score: 0,
+		score: score,
 	}
 
 }
@@ -132,7 +132,7 @@ func (floatyWord floatyWord) Draw(screen *ebiten.Image) error {
 
 	return nil
 }
-func (floatyWord *floatyWord) Update(tick int) error {
+func (floatyWord *floatyWord) Update() error {
 	if floatyWord.x > floatyWord.aniX.changeSize+floatyWord.img.x {
 		floatyWord.x = -floatyWord.img.x
 		floatyWord.y = getRandom(minY, maxY)
@@ -166,6 +166,7 @@ func shot(floatyWord *floatyWord) {
 	x, y := ebiten.CursorPosition()
 
 	if x > int(minX) && x < int(maxX) && y > int(minY) && y < int(maxY) {
+		*floatyWord.score++
 		floatyWord.show = false
 	}
 

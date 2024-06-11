@@ -51,7 +51,7 @@ func (table *table) Draw(screen *ebiten.Image) error {
 	return nil
 }
 
-func (table *table) Update(_ int) error {
+func (table *table) Update() error {
 	return nil
 }
 

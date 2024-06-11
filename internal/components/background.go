@@ -41,7 +41,7 @@ func (background *background) Draw(screen *ebiten.Image) error {
 	return nil
 }
 
-func (d *background) Update(_ int) error {
+func (d *background) Update() error {
 	return nil
 }
 

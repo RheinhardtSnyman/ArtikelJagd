@@ -82,7 +82,7 @@ func (wave *wave) Draw(screen *ebiten.Image) error {
 	return nil
 }
 
-func (wave *wave) Update(tick int) error {
+func (wave *wave) Update() error {
 
 	if wave.aniDr {
 		if wave.aniX.tick >= wave.x {

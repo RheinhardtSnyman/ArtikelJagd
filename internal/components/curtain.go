@@ -72,7 +72,7 @@ func (curtain *curtain) Draw(screen *ebiten.Image) error {
 	return nil
 }
 
-func (curtain *curtain) Update(_ int) error {
+func (curtain *curtain) Update() error {
 	return nil
 }
 

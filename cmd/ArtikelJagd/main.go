@@ -22,14 +22,13 @@ const (
 
 func (game *Game) Update() error {
 	for idx, cmpt := range game.components {
-		if err := cmpt.Update(game.score); err != nil {
+		if err := cmpt.Update(); err != nil {
 			log.Fatal(err)
 		}
 
 		if !cmpt.OnScreen() {
 			game.components = append(game.components[:idx], game.components[idx+1:]...)
-			game.score++
-			game.components = slices.Insert(game.components, 2, component.NewfloatyWord(800, 30))
+			game.components = slices.Insert(game.components, 2, component.NewfloatyWord(&game.score, 800, 30))
 		}
 	}
 
@@ -63,18 +62,25 @@ func Start() *Game {
 	ebiten.SetWindowTitle("ArtikelJagd")
 
 	game := &Game{
-		components: []component.Component{
-			component.NewBackground(),
-			component.NewWave(true, "water2", 60, 0.4, -1, 210, 0.15, 25),
-			component.NewfloatyWord(800, 30),
-			component.NewWave(false, "water1"),
-			component.NewTable(),
-			component.NewCurtain(east),
-			component.NewCurtain(west),
-			component.NewCurtain(north),
-			component.NewCrosshair(),
-		},
 		score: 0,
+	}
+
+	game.components = []component.Component{
+		component.NewBackground(),
+		component.NewWave(true, "water2", 60, 0.4, -1, 210, 0.15, 25),
+		component.NewfloatyWord(&game.score, 800, 30),
+		component.NewWave(false, "water1"),
+		component.NewTable(),
+		component.NewCurtain(east),
+		component.NewCurtain(west),
+		component.NewCurtain(north),
+
+		component.NewScoreboard(&game.score),
+		component.NewButton("Red", 225.00),
+		component.NewButton("Gre", 375.00),
+		component.NewButton("Blu", 525.00),
+
+		component.NewCrosshair(),
 	}
 
 	return game

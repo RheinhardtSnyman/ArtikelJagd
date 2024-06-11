@@ -39,7 +39,7 @@ func (crosshair *crosshair) Draw(screen *ebiten.Image) error {
 	return nil
 }
 
-func (crosshair *crosshair) Update(_ int) error {
+func (crosshair *crosshair) Update() error {
 	return nil
 }
 
