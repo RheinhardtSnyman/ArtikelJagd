@@ -24,14 +24,16 @@ type word struct {
 }
 
 type floatyWord struct {
-	img   image
-	word  word
-	aniX  animation
-	aniY  animation
-	x     float64
-	y     float64
-	show  bool
-	score *int
+	img     image
+	word    word
+	aniX    animation
+	aniY    animation
+	x       float64
+	y       float64
+	show    bool
+	score   *int
+	variety int
+	armed   *int
 }
 
 var faceSource *text.GoTextFaceSource
@@ -56,7 +58,7 @@ func getRandom(min, max int) float64 {
 	return float64(rand.Intn(max-min) + min)
 }
 
-func NewfloatyWord(score *int, aniX, aniY float64) Component {
+func NewfloatyWord(score *int, aniX, aniY float64, variety int, armed *int) Component {
 
 	img, _, err := ebitenutil.NewImageFromFile("./assets/images/Stall/cloud2.png")
 	if err != nil {
@@ -75,20 +77,22 @@ func NewfloatyWord(score *int, aniX, aniY float64) Component {
 		},
 		aniX: animation{
 			tick:       0.0,
-			speed:      1.0,
+			speed:      float64(getRandom(80, 150)) / 100,
 			changeSize: aniX,
 			direction:  forward,
 		},
 		aniY: animation{
 			tick:       0.0,
-			speed:      0.1,
+			speed:      float64(getRandom(10, 35)) / 100,
 			changeSize: aniY,
 			direction:  forward,
 		},
-		x:     -float64(img.Bounds().Dx()),
-		y:     getRandom(minY, maxY),
-		show:  true,
-		score: score,
+		x:       -float64(img.Bounds().Dx()),
+		y:       getRandom(minY, maxY),
+		show:    true,
+		score:   score,
+		variety: variety,
+		armed:   armed,
 	}
 
 }
@@ -158,16 +162,28 @@ func (floatyWord *floatyWord) Update() error {
 }
 
 func shot(floatyWord *floatyWord) {
-	minX := floatyWord.x
-	maxX := minX + floatyWord.img.x
-	minY := floatyWord.y
-	maxY := minY + floatyWord.img.y
+	boxMinX := floatyWord.x
+	boxMaxX := boxMinX + floatyWord.img.x
+	boxMinY := floatyWord.y
+	boxMaxY := boxMinY + floatyWord.img.y
 
 	x, y := ebiten.CursorPosition()
+	if *floatyWord.armed != none {
+		if x > int(boxMinX) && x < int(boxMaxX) && y > int(boxMinY) && y < int(boxMaxY) {
+			// Got a hit
+			if *floatyWord.armed == floatyWord.variety {
+				*floatyWord.score++
+				floatyWord.show = false
+			} else {
+				*floatyWord.score--
+				floatyWord.x = -floatyWord.img.x
+				floatyWord.y = getRandom(minY, maxY)
+				if floatyWord.aniX.speed < 3 {
+					floatyWord.aniX.speed += 2
+				}
+			}
 
-	if x > int(minX) && x < int(maxX) && y > int(minY) && y < int(maxY) {
-		*floatyWord.score++
-		floatyWord.show = false
+		}
 	}
 
 }

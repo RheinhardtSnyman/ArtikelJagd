@@ -9,9 +9,17 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+const (
+	die = iota
+	der
+	das
+	none
+)
+
 type Game struct {
 	components []component.Component
 	score      int
+	armed      int
 }
 
 const (
@@ -28,7 +36,7 @@ func (game *Game) Update() error {
 
 		if !cmpt.OnScreen() {
 			game.components = append(game.components[:idx], game.components[idx+1:]...)
-			game.components = slices.Insert(game.components, 2, component.NewfloatyWord(&game.score, 800, 30))
+			game.components = slices.Insert(game.components, 2, component.NewfloatyWord(&game.score, 800, 30, der, &game.armed))
 		}
 	}
 
@@ -63,12 +71,13 @@ func Start() *Game {
 
 	game := &Game{
 		score: 0,
+		armed: die,
 	}
 
 	game.components = []component.Component{
 		component.NewBackground(),
 		component.NewWave(true, "water2", 60, 0.4, -1, 210, 0.15, 25),
-		component.NewfloatyWord(&game.score, 800, 30),
+		component.NewfloatyWord(&game.score, 800, 30, die, &game.armed),
 		component.NewWave(false, "water1"),
 		component.NewTable(),
 		component.NewCurtain(east),
@@ -76,9 +85,9 @@ func Start() *Game {
 		component.NewCurtain(north),
 
 		component.NewScoreboard(&game.score),
-		component.NewButton("Red", 225.00),
-		component.NewButton("Gre", 375.00),
-		component.NewButton("Blu", 525.00),
+		component.NewButton("Die", 225.00, die, &game.armed),
+		component.NewButton("Der", 375.00, der, &game.armed),
+		component.NewButton("Das", 525.00, das, &game.armed),
 
 		component.NewCrosshair(),
 	}

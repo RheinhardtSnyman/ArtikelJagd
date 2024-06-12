@@ -15,6 +15,13 @@ const (
 	backwards direction = -1
 )
 
+const (
+	die = iota
+	der
+	das
+	none
+)
+
 type animation struct {
 	tick       float64
 	speed      float64
