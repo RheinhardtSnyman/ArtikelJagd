@@ -16,9 +16,9 @@ const (
 )
 
 const (
-	die = iota
-	der
-	das
+	red = iota
+	blue
+	yellow
 	none
 )
 

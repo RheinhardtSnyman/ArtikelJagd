@@ -3,16 +3,18 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"slices"
+	"time"
 
 	component "github.com/RheinhardtSnyman/ArtikelJagd/internal/components"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 const (
-	die = iota
-	der
-	das
+	red = iota
+	blue
+	yellow
 	none
 )
 
@@ -28,15 +30,35 @@ const (
 	west
 )
 
+func getRandomKeyValue() (int, string) {
+
+	word := map[string]int{"red": 0, "blue": 1, "yellow": 2}
+
+	keys := make([]string, 0, len(word))
+	for key := range word {
+		keys = append(keys, key)
+	}
+
+	rand.Seed(time.Now().UnixNano())
+	index := rand.Intn(len(keys))
+
+	key := keys[index]
+	value := word[key]
+
+	return value, key
+}
+
 func (game *Game) Update() error {
 	for idx, cmpt := range game.components {
 		if err := cmpt.Update(); err != nil {
 			log.Fatal(err)
 		}
 
+		variety, value := getRandomKeyValue()
+
 		if !cmpt.OnScreen() {
 			game.components = append(game.components[:idx], game.components[idx+1:]...)
-			game.components = slices.Insert(game.components, 2, component.NewfloatyWord(&game.score, 800, 30, der, &game.armed))
+			game.components = slices.Insert(game.components, 2, component.NewfloatyWord(&game.score, 800, 30, &game.armed, variety, value))
 		}
 	}
 
@@ -71,13 +93,15 @@ func Start() *Game {
 
 	game := &Game{
 		score: 0,
-		armed: die,
+		armed: none,
 	}
+
+	variety, value := getRandomKeyValue()
 
 	game.components = []component.Component{
 		component.NewBackground(),
 		component.NewWave(true, "water2", 60, 0.4, -1, 210, 0.15, 25),
-		component.NewfloatyWord(&game.score, 800, 30, die, &game.armed),
+		component.NewfloatyWord(&game.score, 800, 30, &game.armed, variety, value),
 		component.NewWave(false, "water1"),
 		component.NewTable(),
 		component.NewCurtain(east),
@@ -85,11 +109,11 @@ func Start() *Game {
 		component.NewCurtain(north),
 
 		component.NewScoreboard(&game.score),
-		component.NewButton("Die", 225.00, die, &game.armed),
-		component.NewButton("Der", 375.00, der, &game.armed),
-		component.NewButton("Das", 525.00, das, &game.armed),
+		component.NewButton("Red", 200.00, red, &game.armed),
+		component.NewButton("Blue", 350.00, blue, &game.armed),
+		component.NewButton("Yel", 515.00, yellow, &game.armed),
 
-		component.NewCrosshair(),
+		component.NewCrosshair(&game.armed),
 	}
 
 	return game

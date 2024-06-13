@@ -19,21 +19,21 @@ type image struct {
 }
 
 type word struct {
+	variety  int
 	val      string
 	fontSize float64
 }
 
 type floatyWord struct {
-	img     image
-	word    word
-	aniX    animation
-	aniY    animation
-	x       float64
-	y       float64
-	show    bool
-	score   *int
-	variety int
-	armed   *int
+	img   image
+	word  word
+	aniX  animation
+	aniY  animation
+	x     float64
+	y     float64
+	show  bool
+	score *int
+	armed *int
 }
 
 var faceSource *text.GoTextFaceSource
@@ -58,7 +58,7 @@ func getRandom(min, max int) float64 {
 	return float64(rand.Intn(max-min) + min)
 }
 
-func NewfloatyWord(score *int, aniX, aniY float64, variety int, armed *int) Component {
+func NewfloatyWord(score *int, aniX, aniY float64, armed *int, variety int, val string) Component {
 
 	img, _, err := ebitenutil.NewImageFromFile("./assets/images/Stall/cloud2.png")
 	if err != nil {
@@ -72,7 +72,8 @@ func NewfloatyWord(score *int, aniX, aniY float64, variety int, armed *int) Comp
 			y:   float64(img.Bounds().Dy()),
 		},
 		word: word{
-			val:      "Gemüẞe",
+			variety:  variety,
+			val:      val,
 			fontSize: 22,
 		},
 		aniX: animation{
@@ -87,12 +88,11 @@ func NewfloatyWord(score *int, aniX, aniY float64, variety int, armed *int) Comp
 			changeSize: aniY,
 			direction:  forward,
 		},
-		x:       -float64(img.Bounds().Dx()),
-		y:       getRandom(minY, maxY),
-		show:    true,
-		score:   score,
-		variety: variety,
-		armed:   armed,
+		x:     -float64(img.Bounds().Dx()),
+		y:     getRandom(minY, maxY),
+		show:  true,
+		score: score,
+		armed: armed,
 	}
 
 }
@@ -154,7 +154,7 @@ func (floatyWord *floatyWord) Update() error {
 		}
 	}
 
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && *floatyWord.armed != none {
 		shot(floatyWord)
 	}
 
@@ -171,7 +171,7 @@ func shot(floatyWord *floatyWord) {
 	if *floatyWord.armed != none {
 		if x > int(boxMinX) && x < int(boxMaxX) && y > int(boxMinY) && y < int(boxMaxY) {
 			// Got a hit
-			if *floatyWord.armed == floatyWord.variety {
+			if *floatyWord.armed == floatyWord.word.variety {
 				*floatyWord.score++
 				floatyWord.show = false
 			} else {
