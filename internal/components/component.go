@@ -18,7 +18,7 @@ const (
 const (
 	red = iota
 	blue
-	yellow
+	green
 	none
 )
 

@@ -14,7 +14,7 @@ type background struct {
 }
 
 func NewBackground() Component {
-	img, _, err := ebitenutil.NewImageFromFile("./assets/images/Stall/bg_green.png")
+	img, _, err := ebitenutil.NewImageFromFile("./assets/images/Stall/bg_blue.png")
 	if err != nil {
 		log.Fatal(err)
 	}

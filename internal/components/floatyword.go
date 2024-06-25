@@ -78,7 +78,7 @@ func NewfloatyWord(score *int, aniX, aniY float64, armed *int, variety int, val 
 		},
 		aniX: animation{
 			tick:       0.0,
-			speed:      float64(getRandom(80, 150)) / 100,
+			speed:      float64(getRandom(90, 150)) / 100,
 			changeSize: aniX,
 			direction:  forward,
 		},

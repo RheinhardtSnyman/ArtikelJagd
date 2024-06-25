@@ -22,10 +22,12 @@ func getImg(armed int) *ebiten.Image {
 		name = "crosshair_red_small"
 	case blue:
 		name = "crosshair_blue_small"
-	case yellow:
-		name = "crosshair_white_small"
+	case green:
+		name = "crosshair_green_small"
 	}
-
+	if armed != none {
+		ebiten.SetCursorMode(ebiten.CursorModeHidden)
+	}
 	img, _, err := ebitenutil.NewImageFromFile("./assets/images/HUD/" + name + ".png")
 	if err != nil {
 		log.Fatal(err)

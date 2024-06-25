@@ -47,7 +47,7 @@ func NewCurtain(direction direction) Component {
 }
 
 func (curtain *curtain) Draw(screen *ebiten.Image) error {
-	defaultY := 60.0
+	defaultY := 55.0
 	direction := curtain.direction
 	screenX := float64(screen.Bounds().Dx())
 	options := &ebiten.DrawImageOptions{}

@@ -5,7 +5,6 @@ import (
 	"log"
 	"math/rand"
 	"slices"
-	"time"
 
 	component "github.com/RheinhardtSnyman/ArtikelJagd/internal/components"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -14,7 +13,7 @@ import (
 const (
 	red = iota
 	blue
-	yellow
+	green
 	none
 )
 
@@ -32,14 +31,13 @@ const (
 
 func getRandomKeyValue() (int, string) {
 
-	word := map[string]int{"red": 0, "blue": 1, "yellow": 2}
+	word := map[string]int{"red": 0, "blue": 1, "green": 2}
 
 	keys := make([]string, 0, len(word))
 	for key := range word {
 		keys = append(keys, key)
 	}
 
-	rand.Seed(time.Now().UnixNano())
 	index := rand.Intn(len(keys))
 
 	key := keys[index]
@@ -111,7 +109,7 @@ func Start() *Game {
 		component.NewScoreboard(&game.score),
 		component.NewButton("Red", 200.00, red, &game.armed),
 		component.NewButton("Blue", 350.00, blue, &game.armed),
-		component.NewButton("Yel", 515.00, yellow, &game.armed),
+		component.NewButton("Grn", 515.00, green, &game.armed),
 
 		component.NewCrosshair(&game.armed),
 	}
