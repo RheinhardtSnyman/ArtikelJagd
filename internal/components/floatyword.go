@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"image/color"
 	"log"
-	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/examples/resources/fonts"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -52,10 +51,6 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-func getRandom(min, max int) float64 {
-	return float64(rand.Intn(max-min) + min)
 }
 
 func NewfloatyWord(score *int, aniX, aniY float64, armed *int, variety int, val string) Component {

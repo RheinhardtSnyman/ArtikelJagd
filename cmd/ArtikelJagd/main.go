@@ -98,6 +98,8 @@ func Start() *Game {
 
 	game.components = []component.Component{
 		component.NewBackground(),
+		component.NewMountian(260.0, 800),
+		component.NewMountian(335.0, 800),
 		component.NewWave(true, "water2", 60, 0.4, -1, 210, 0.15, 25),
 		component.NewfloatyWord(&game.score, 800, 30, &game.armed, variety, value),
 		component.NewWave(false, "water1"),

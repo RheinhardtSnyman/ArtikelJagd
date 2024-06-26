@@ -1,6 +1,10 @@
 package component
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"math/rand"
+
+	"github.com/hajimehoshi/ebiten/v2"
+)
 
 type Component interface {
 	Update() error
@@ -31,4 +35,8 @@ type animation struct {
 
 func changeDirection(ani *animation) {
 	ani.direction = ani.direction * -1
+}
+
+func getRandom(min, max int) float64 {
+	return float64(rand.Intn(max-min) + min)
 }
