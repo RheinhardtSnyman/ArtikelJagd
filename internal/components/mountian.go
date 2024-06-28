@@ -58,10 +58,10 @@ func (mountian *mountian) Draw(screen *ebiten.Image) error {
 	return nil
 }
 
-func (mountin *mountian) Update() error {
+func (mountian *mountian) Update() error {
 	return nil
 }
 
-func (mountin *mountian) OnScreen() bool {
+func (mountian *mountian) OnScreen() bool {
 	return true
 }
