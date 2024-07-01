@@ -56,7 +56,7 @@ func (game *Game) Update() error {
 
 		if !cmpt.OnScreen() {
 			game.components = append(game.components[:idx], game.components[idx+1:]...)
-			game.components = slices.Insert(game.components, 2, component.NewfloatyWord(&game.score, 800, 30, &game.armed, variety, value))
+			game.components = slices.Insert(game.components, 8, component.NewfloatyWord(&game.score, 800, 30, &game.armed, variety, value))
 		}
 	}
 
@@ -98,11 +98,11 @@ func Start() *Game {
 
 	game.components = []component.Component{
 		component.NewBackground(),
-		component.NewMountian(260.0, 800),
-		component.NewTree(270, 0.5, 0.2, 800, 50),
-		component.NewTree(275, 0.3, 0.3, 800, 70),
-		component.NewMountian(335.0, 800),
-		component.NewTree(275, 0.0, 0.5, 800, 140),
+		component.NewMountian(260.0, 800, 0.80),
+		component.NewTree(272, 0.5, 0.18, 800, 60, 0.87),
+		component.NewTree(275, 0.3, 0.3, 800, 80, 0.88),
+		component.NewMountian(335.0, 800, 1),
+		component.NewTree(285, 0.0, 0.45, 800, 120, 0.90),
 		component.NewWave(true, "water2", 60, 0.4, -1, 210, 0.15, 25),
 		component.NewfloatyWord(&game.score, 800, 30, &game.armed, variety, value),
 		component.NewWave(false, "water1"),
@@ -116,6 +116,7 @@ func Start() *Game {
 		component.NewButton("Blue", 350.00, blue, &game.armed),
 		component.NewButton("Grn", 515.00, green, &game.armed),
 
+		component.NewAmmo(680, 10.0),
 		component.NewCrosshair(&game.armed),
 	}
 

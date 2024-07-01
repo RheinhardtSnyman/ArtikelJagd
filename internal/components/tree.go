@@ -17,9 +17,10 @@ type tree struct {
 	treeRow []placedTree
 	w       float64
 	scale   float64
+	alpha   float32
 }
 
-func NewTree(y int, density float64, scale float64, w float64, in float64) Component {
+func NewTree(y int, density float64, scale float64, w float64, in float64, alpha float32) Component {
 	imgUrls := []string{
 		"./assets/images/Stall/tree_oak.png",
 		"./assets/images/Stall/tree_pine.png"}
@@ -40,6 +41,7 @@ func NewTree(y int, density float64, scale float64, w float64, in float64) Compo
 		treeRow: trees,
 		w:       w,
 		scale:   scale,
+		alpha:   alpha,
 	}
 }
 
@@ -48,6 +50,7 @@ func (tree *tree) Draw(screen *ebiten.Image) error {
 	for _, t := range tree.treeRow {
 		options := &ebiten.DrawImageOptions{}
 		options.GeoM.Scale(tree.scale, tree.scale)
+		options.ColorScale.ScaleAlpha(tree.alpha)
 		options.GeoM.Translate(t.x, t.y)
 		screen.DrawImage(t.img, options)
 	}

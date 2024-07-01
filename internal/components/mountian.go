@@ -11,6 +11,7 @@ type mountian struct {
 	imgs  [2]*ebiten.Image
 	y     float64
 	combo []int
+	alpha float32
 }
 
 func getRange(w int, count int, imgW int) []int {
@@ -21,7 +22,7 @@ func getRange(w int, count int, imgW int) []int {
 	return imgCombo
 }
 
-func NewMountian(y float64, w int) Component {
+func NewMountian(y float64, w int, alpha float32) Component {
 	imgUrls := []string{"./assets/images/Stall/grass1.png",
 		"./assets/images/Stall/grass2.png"}
 
@@ -38,6 +39,7 @@ func NewMountian(y float64, w int) Component {
 		imgs:  imgs,
 		y:     y,
 		combo: getRange(w, len(imgUrls), 132),
+		alpha: alpha,
 	}
 }
 
@@ -49,6 +51,7 @@ func (mountian *mountian) Draw(screen *ebiten.Image) error {
 
 	for x := 0; x < screenX; x += curImg.Bounds().Dx() {
 		options := &ebiten.DrawImageOptions{}
+		options.ColorScale.ScaleAlpha(mountian.alpha)
 		options.GeoM.Translate(float64(x), mountian.y)
 		screen.DrawImage(curImg, options)
 		curImg = mountian.imgs[mountian.combo[idx]]
