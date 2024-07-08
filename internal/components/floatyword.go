@@ -33,6 +33,7 @@ type floatyWord struct {
 	show  bool
 	score *int
 	armed *int
+	lives *int
 }
 
 var faceSource *text.GoTextFaceSource
@@ -53,7 +54,7 @@ func init() {
 	}
 }
 
-func NewfloatyWord(score *int, aniX, aniY float64, armed *int, variety int, val string) Component {
+func NewfloatyWord(lives *int, score *int, aniX, aniY float64, armed *int, variety int, val string) Component {
 
 	img, _, err := ebitenutil.NewImageFromFile("./assets/images/Stall/cloud2.png")
 	if err != nil {
@@ -88,6 +89,7 @@ func NewfloatyWord(score *int, aniX, aniY float64, armed *int, variety int, val 
 		show:  true,
 		score: score,
 		armed: armed,
+		lives: lives,
 	}
 
 }
@@ -173,6 +175,7 @@ func shot(floatyWord *floatyWord) {
 				*floatyWord.score--
 				floatyWord.x = -floatyWord.img.x
 				floatyWord.y = getRandom(minY, maxY)
+				*floatyWord.lives--
 				if floatyWord.aniX.speed < 3 {
 					floatyWord.aniX.speed += 2
 				}
