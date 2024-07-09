@@ -9,16 +9,20 @@ import (
 )
 
 type scoreboard struct {
-	text     string
-	fontSize int
-	score    *int
+	text         string
+	fontSize     int
+	score        *int
+	lives        *int
+	bonusEagleAt int
 }
 
-func NewScoreboard(score *int) Component {
+func NewScoreboard(lives *int, score *int) Component {
 	return &scoreboard{
-		text:     "",
-		fontSize: 30,
-		score:    score,
+		text:         "",
+		fontSize:     30,
+		score:        score,
+		lives:        lives,
+		bonusEagleAt: 10,
 	}
 }
 
@@ -38,6 +42,10 @@ func (scoreboard scoreboard) Draw(screen *ebiten.Image) error {
 
 func (scoreboard *scoreboard) Update() error {
 	scoreboard.text = fmt.Sprintf("Score: %d", *scoreboard.score)
+	if *scoreboard.score == scoreboard.bonusEagleAt {
+		*scoreboard.lives++
+		scoreboard.bonusEagleAt += 20
+	}
 	return nil
 }
 

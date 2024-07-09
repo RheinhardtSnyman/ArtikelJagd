@@ -113,12 +113,12 @@ func Start() *Game {
 		component.NewCurtain(west),
 		component.NewCurtain(north),
 
-		component.NewScoreboard(&game.score),
+		component.NewAmmo(515, 10.0, 7, &game.lives),
+		component.NewScoreboard(&game.lives, &game.score),
 		component.NewButton("Red", 200.00, red, &game.armed),
 		component.NewButton("Blue", 350.00, blue, &game.armed),
 		component.NewButton("Grn", 515.00, green, &game.armed),
 
-		component.NewAmmo(515, 10.0, 8, &game.lives),
 		component.NewCrosshair(&game.armed),
 	}
 
