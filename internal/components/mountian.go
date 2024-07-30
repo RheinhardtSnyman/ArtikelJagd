@@ -3,6 +3,7 @@ package component
 import (
 	"log"
 
+	"github.com/RheinhardtSnyman/ArtikelJagd/internal/helper"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
@@ -17,7 +18,7 @@ type mountian struct {
 func getRange(w int, count int, imgW int) []int {
 	imgCombo := []int{}
 	for x := 0; x < w; x += imgW {
-		imgCombo = append(imgCombo, int(getRandom(0, count)))
+		imgCombo = append(imgCombo, int(helper.GetRandom(0, count)))
 	}
 	return imgCombo
 }

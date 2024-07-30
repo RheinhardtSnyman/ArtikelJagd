@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"log"
 
+	"github.com/RheinhardtSnyman/ArtikelJagd/internal/helper"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
@@ -41,11 +42,11 @@ func NewButton(text string, x float64, variety int, armed *int) Component {
 func getImages(variety int) (*ebiten.Image, *ebiten.Image, *ebiten.Image) {
 	color := ""
 	switch variety {
-	case red:
+	case helper.RED:
 		color = "_red"
-	case blue:
+	case helper.BLUE:
 		color = "_blue"
-	case green:
+	case helper.GREEN:
 		color = "_green"
 	}
 

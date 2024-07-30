@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"log"
 
+	"github.com/RheinhardtSnyman/ArtikelJagd/internal/helper"
 	"github.com/hajimehoshi/ebiten/examples/resources/fonts"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -74,18 +75,18 @@ func NewfloatyWord(lives *int, score *int, aniX, aniY float64, armed *int, varie
 		},
 		aniX: animation{
 			tick:       0.0,
-			speed:      float64(getRandom(90, 150)) / 100,
+			speed:      float64(helper.GetRandom(90, 150)) / 100,
 			changeSize: aniX,
 			direction:  forward,
 		},
 		aniY: animation{
 			tick:       0.0,
-			speed:      float64(getRandom(10, 35)) / 100,
+			speed:      float64(helper.GetRandom(10, 35)) / 100,
 			changeSize: aniY,
 			direction:  forward,
 		},
 		x:     -float64(img.Bounds().Dx()),
-		y:     getRandom(minY, maxY),
+		y:     helper.GetRandom(minY, maxY),
 		show:  true,
 		score: score,
 		armed: armed,
@@ -136,7 +137,7 @@ func (floatyWord floatyWord) Draw(screen *ebiten.Image) error {
 func (floatyWord *floatyWord) Update() error {
 	if floatyWord.x > floatyWord.aniX.changeSize+floatyWord.img.x {
 		floatyWord.x = -floatyWord.img.x
-		floatyWord.y = getRandom(minY, maxY)
+		floatyWord.y = helper.GetRandom(minY, maxY)
 	}
 	floatyWord.x += floatyWord.aniX.speed
 
@@ -151,7 +152,7 @@ func (floatyWord *floatyWord) Update() error {
 		}
 	}
 
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && *floatyWord.armed != none {
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && *floatyWord.armed != helper.NONE {
 		shot(floatyWord)
 	}
 
@@ -165,7 +166,7 @@ func shot(floatyWord *floatyWord) {
 	boxMaxY := boxMinY + floatyWord.img.y
 
 	x, y := ebiten.CursorPosition()
-	if *floatyWord.armed != none {
+	if *floatyWord.armed != helper.NONE {
 		if x > int(boxMinX) && x < int(boxMaxX) && y > int(boxMinY) && y < int(boxMaxY) {
 			// Got a hit
 			if *floatyWord.armed == floatyWord.word.variety {
@@ -174,7 +175,7 @@ func shot(floatyWord *floatyWord) {
 			} else {
 				*floatyWord.score--
 				floatyWord.x = -floatyWord.img.x
-				floatyWord.y = getRandom(minY, maxY)
+				floatyWord.y = helper.GetRandom(minY, maxY)
 				*floatyWord.lives--
 				if floatyWord.aniX.speed < 3 {
 					floatyWord.aniX.speed += 2

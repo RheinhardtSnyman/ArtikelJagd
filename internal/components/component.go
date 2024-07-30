@@ -3,8 +3,6 @@
 package component
 
 import (
-	"math/rand"
-
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -21,14 +19,6 @@ const (
 	backwards direction = -1
 )
 
-// iota declared this way will result in values of 0,1,2,3 and so on in underlying variables
-const (
-	red = iota
-	blue
-	green
-	none
-)
-
 type animation struct {
 	tick       float64
 	speed      float64
@@ -38,9 +28,4 @@ type animation struct {
 
 func changeDirection(ani *animation) {
 	ani.direction = ani.direction * -1
-}
-
-// TODO this func can posibly reused
-func getRandom(min, max int) float64 {
-	return float64(rand.Intn(max-min) + min)
 }

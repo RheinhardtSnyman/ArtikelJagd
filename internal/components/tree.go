@@ -3,6 +3,7 @@ package component
 import (
 	"log"
 
+	"github.com/RheinhardtSnyman/ArtikelJagd/internal/helper"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
@@ -27,14 +28,14 @@ func NewTree(y int, density float64, scale float64, w float64, in float64, alpha
 
 	var trees []placedTree
 	for x := 0.0; x < w; x += in + (in * (1 - density)) {
-		img, _, err := ebitenutil.NewImageFromFile(imgUrls[int(getRandom(0, len(imgUrls)))])
+		img, _, err := ebitenutil.NewImageFromFile(imgUrls[int(helper.GetRandom(0, len(imgUrls)))])
 		if err != nil {
 			log.Fatal(err)
 		}
 		trees = append(trees, placedTree{
 			img: img,
-			x:   getRandom(int(x-15), int(x+15)),
-			y:   getRandom(y-25, y+25),
+			x:   helper.GetRandom(int(x-15), int(x+15)),
+			y:   helper.GetRandom(y-25, y+25),
 		})
 	}
 	return &tree{

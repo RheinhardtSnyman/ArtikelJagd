@@ -7,14 +7,8 @@ import (
 	"slices"
 
 	component "github.com/RheinhardtSnyman/ArtikelJagd/internal/components"
+	"github.com/RheinhardtSnyman/ArtikelJagd/internal/helper"
 	"github.com/hajimehoshi/ebiten/v2"
-)
-
-const (
-	red = iota
-	blue
-	green
-	none
 )
 
 type Game struct {
@@ -103,7 +97,7 @@ func Start() *Game {
 
 	game := &Game{
 		score: 0,
-		armed: none,
+		armed: helper.NONE,
 		lives: 3,
 	}
 
@@ -128,9 +122,9 @@ func Start() *Game {
 
 		component.NewAmmo(515, 10.0, 7, &game.lives),
 		component.NewScoreboard(&game.lives, &game.score),
-		component.NewButton("Red", 200.00, red, &game.armed),
-		component.NewButton("Blue", 350.00, blue, &game.armed),
-		component.NewButton("Grn", 515.00, green, &game.armed),
+		component.NewButton("Red", 200.00, helper.RED, &game.armed),
+		component.NewButton("Blue", 350.00, helper.BLUE, &game.armed),
+		component.NewButton("Grn", 515.00, helper.GREEN, &game.armed),
 
 		component.NewCrosshair(&game.armed),
 	}

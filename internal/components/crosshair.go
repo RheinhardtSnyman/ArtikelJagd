@@ -3,6 +3,7 @@ package component
 import (
 	"log"
 
+	"github.com/RheinhardtSnyman/ArtikelJagd/internal/helper"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
@@ -18,14 +19,14 @@ func getImg(armed int) *ebiten.Image {
 
 	name := "crosshair_white_small"
 	switch armed {
-	case red:
+	case helper.RED:
 		name = "crosshair_red_small"
-	case blue:
+	case helper.BLUE:
 		name = "crosshair_blue_small"
-	case green:
+	case helper.GREEN:
 		name = "crosshair_green_small"
 	}
-	if armed != none {
+	if armed != helper.NONE {
 		ebiten.SetCursorMode(ebiten.CursorModeHidden)
 	}
 	img, _, err := ebitenutil.NewImageFromFile("./assets/images/HUD/" + name + ".png")
@@ -47,7 +48,7 @@ func NewCrosshair(armed *int) Component {
 
 func (crosshair *crosshair) Draw(screen *ebiten.Image) error {
 
-	if *crosshair.armed != none {
+	if *crosshair.armed != helper.NONE {
 		crosshair.img = getImg(*crosshair.armed)
 		curX, curY := ebiten.CursorPosition()
 
