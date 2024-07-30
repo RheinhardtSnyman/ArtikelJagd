@@ -1,3 +1,5 @@
+// This is the general component interface file
+// TODO move helper functions to a different file
 package component
 
 import (
@@ -19,6 +21,7 @@ const (
 	backwards direction = -1
 )
 
+// iota declared this way will result in values of 0,1,2,3 and so on in underlying variables
 const (
 	red = iota
 	blue
@@ -37,6 +40,7 @@ func changeDirection(ani *animation) {
 	ani.direction = ani.direction * -1
 }
 
+// TODO this func can posibly reused
 func getRandom(min, max int) float64 {
 	return float64(rand.Intn(max-min) + min)
 }

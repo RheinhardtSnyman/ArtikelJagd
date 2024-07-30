@@ -30,9 +30,10 @@ const (
 	west
 )
 
+// TODO see if this function does not use duplicated logic, ref to component getRandom
 func getRandomKeyValue() (int, string) {
 
-	word := map[string]int{"red": 0, "blue": 1, "green": 2}
+	word := map[string]int{"red": 0, "blue": 1, "green": 2} // TODO replace with articles Die Der Das only after initial viable product
 
 	keys := make([]string, 0, len(word))
 	for key := range word {
@@ -47,6 +48,9 @@ func getRandomKeyValue() (int, string) {
 	return value, key
 }
 
+// Part of game loop inicialized in Run()
+// Update runs 60 times a second to give 60fps and is thus animation safe
+// Runs update function of all components in sequence
 func (game *Game) Update() error {
 	for idx, cmpt := range game.components {
 		if err := cmpt.Update(); err != nil {
@@ -55,6 +59,8 @@ func (game *Game) Update() error {
 
 		variety, value := getRandomKeyValue()
 
+		// If floatyword component is not on screen, remove it and add new floatyword component in correct z index.
+		// TODO OnScreen is a general component funciton and should return compnent identifier and not assume its just floatyword.
 		if !cmpt.OnScreen() {
 			game.components = append(game.components[:idx], game.components[idx+1:]...)
 			game.components = slices.Insert(game.components, 8, component.NewfloatyWord(&game.lives, &game.score, 800, 30, &game.armed, variety, value))
@@ -64,6 +70,9 @@ func (game *Game) Update() error {
 	return nil
 }
 
+// Part of game loop inicialized in Run()
+// Draw runs x times a second depending on PC spec and is thus too inconsistent arcross devices to use as animation tick.
+// Runs draw function of all components in sequence
 func (game *Game) Draw(screen *ebiten.Image) {
 	for _, component := range game.components {
 		if err := component.Draw(screen); err != nil {
@@ -76,6 +85,7 @@ func (g *Game) Layout(x, y int) (screenWidth, screenHeight int) {
 	return x, y
 }
 
+// Inicial execution function
 func main() {
 	game := Start()
 	if err := game.Run(); err != nil {
@@ -83,6 +93,7 @@ func main() {
 	}
 }
 
+// Start initializes starting game components
 func Start() *Game {
 
 	fmt.Println("Starting")
@@ -98,6 +109,8 @@ func Start() *Game {
 
 	variety, value := getRandomKeyValue()
 
+	//TODO use better state manegement instead of passing indevidaul pointers use state object pointer
+	// NOTE Comoponents are drawn stacked on each other, initialization order matters.
 	game.components = []component.Component{
 		component.NewBackground(),
 		component.NewMountian(260.0, 800, 0.80),
@@ -125,6 +138,7 @@ func Start() *Game {
 	return game
 }
 
+// Executes game loop
 func (game *Game) Run() error {
 
 	if err := ebiten.RunGame(game); err != nil {

@@ -41,6 +41,7 @@ func (background *background) Draw(screen *ebiten.Image) error {
 	return nil
 }
 
+// Background component has no animation
 func (d *background) Update() error {
 	return nil
 }
