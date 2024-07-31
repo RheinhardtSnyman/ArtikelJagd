@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"image/color"
 	"log"
+	"time"
 
 	"github.com/RheinhardtSnyman/ArtikelJagd/internal/helper"
 	"github.com/hajimehoshi/ebiten/examples/resources/fonts"
@@ -25,16 +26,17 @@ type word struct {
 }
 
 type floatyWord struct {
-	img   image
-	word  word
-	aniX  animation
-	aniY  animation
-	x     float64
-	y     float64
-	show  bool
-	score *int
-	armed *int
-	lives *int
+	img         image
+	word        word
+	aniX        animation
+	aniY        animation
+	x           float64
+	y           float64
+	show        bool
+	score       *int
+	armed       *int
+	lives       *int
+	lastClickAt time.Time
 }
 
 var faceSource *text.GoTextFaceSource
@@ -46,6 +48,8 @@ const (
 	minY     = 85
 	maxY     = 285
 )
+
+const debouncer = 100 * time.Millisecond
 
 func init() {
 	var err error
@@ -152,7 +156,7 @@ func (floatyWord *floatyWord) Update() error {
 		}
 	}
 
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && *floatyWord.armed != helper.NONE {
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && *floatyWord.armed != helper.NONE && time.Now().Sub(floatyWord.lastClickAt) > debouncer {
 		shot(floatyWord)
 	}
 

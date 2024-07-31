@@ -6,10 +6,14 @@ import (
 
 // iota declared this way will result in values of 0,1,2,3 and so on in underlying variables
 const (
-	RED = iota
+	NONE = iota
+	RED
 	BLUE
 	GREEN
-	NONE
+	TOP
+	LEFT
+	RIGHT
+	BOTTOM
 )
 
 func GetRandom(min, max int) float64 { //*Note: shared func are required to start with Capital letters

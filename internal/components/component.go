@@ -27,5 +27,5 @@ type animation struct {
 }
 
 func changeDirection(ani *animation) {
-	ani.direction = ani.direction * -1
+	ani.direction = -ani.direction
 }

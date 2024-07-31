@@ -13,8 +13,8 @@ type background struct {
 	y   float64
 }
 
-func NewBackground() Component {
-	img, _, err := ebitenutil.NewImageFromFile("./assets/images/Stall/bg_blue.png")
+func NewBackground(imgUrl string) Component {
+	img, _, err := ebitenutil.NewImageFromFile(imgUrl)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -29,7 +29,6 @@ func NewBackground() Component {
 func (background *background) Draw(screen *ebiten.Image) error {
 	screenX := float64(screen.Bounds().Dx())
 	screenY := float64(screen.Bounds().Dy())
-
 	for x := 0.0; x < screenX; x += background.x {
 		for y := 0.0; y < screenY; y += background.y {
 			options := &ebiten.DrawImageOptions{}
