@@ -3,6 +3,7 @@ package component
 import (
 	"image/color"
 
+	"github.com/RheinhardtSnyman/ArtikelJagd/internal/helper"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 )
@@ -15,7 +16,7 @@ type menu struct {
 func NewMenu(text string) Component {
 	return &menu{
 		text:     text,
-		fontSize: 120,
+		fontSize: helper.FONT_LARGE,
 	}
 }
 

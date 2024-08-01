@@ -23,14 +23,14 @@ type button struct {
 	scale    float64
 }
 
-func NewButton(text string, x float64, variety int, armed *int) Component {
+func NewButton(x float64, variety int, armed *int) Component {
 
 	img, imgPress, imgHov := getImages(variety)
 	return &button{
 		img:      img,
 		imgPress: imgPress,
 		imgHov:   imgHov,
-		text:     text,
+		text:     helper.BTN_TEXT[variety],
 		fontSize: 30,
 		x:        x,
 		variety:  variety,

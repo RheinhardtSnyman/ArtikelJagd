@@ -16,6 +16,20 @@ const (
 	BOTTOM
 )
 
+var Demo = true
+
+var FONT_LARGE = 110
+var TITLE_TEXT = "ArtikelJagd"
+
+var START_TEXT = "Los geht's!"
+var END_TEXT = "Aua, vorbei!"
+
+var BTN_TEXT = map[int]string{
+	RED:   "Die",
+	BLUE:  "Der",
+	GREEN: "Das",
+}
+
 func GetRandom(min, max int) float64 { //*Note: shared func are required to start with Capital letters
 	return float64(rand.Intn(max-min) + min)
 }
