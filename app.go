@@ -24,6 +24,7 @@ type Game struct {
 	Armed       int
 	Lives       int
 	LastClickAt time.Time
+	WordCount   int
 }
 
 const Debouncer = 500 * time.Millisecond
@@ -60,7 +61,6 @@ func (game *Game) Update() error {
 				//Debouncer to prevent multiple horde of clicks
 				var mouseClicked = ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) && time.Now().Sub(game.LastClickAt) > Debouncer
 				if mouseClicked {
-					fmt.Print("Click \n")
 					game.LastClickAt = time.Now()
 				}
 
@@ -72,9 +72,15 @@ func (game *Game) Update() error {
 					}
 					// If floatyword component is not on screen, remove it and add new floatyword component in correct z index.
 					if !cmpt.OnScreen() {
-						variety, value := data.GetNoun()
 						scene.components = append(scene.components[:idx], scene.components[idx+1:]...)
-						scene.components = slices.Insert(scene.components, 8, component.NewfloatyWord(&game.Lives, &game.Score, 800, 30, &game.Armed, variety, value))
+						addFloatyWord(game, scene, idx)
+						game.WordCount += 1
+						if game.WordCount < 6 {
+							go func(idx int) { // Go rutine
+								time.Sleep(3 * time.Second) // Will only pause this go rutine
+								addFloatyWord(game, scene, idx)
+							}(idx)
+						}
 					}
 				case "start":
 					if mouseClicked {
@@ -90,6 +96,12 @@ func (game *Game) Update() error {
 		}
 	}
 	return nil
+}
+
+func addFloatyWord(game *Game, scene Scene, idx int) {
+	variety, value := data.GetNoun()
+	newComponent := component.NewfloatyWord(&game.Lives, &game.Score, 800, 30, &game.Armed, variety, value)
+	scene.components = slices.Insert(scene.components, idx+1, newComponent)
 }
 
 // Part of game loop inicialized in Run()
@@ -116,6 +128,7 @@ func inicializeScenes(game *Game) {
 	game.Lives = defualtLives
 	game.Score = defualtScore
 	game.Armed = defualtArmed
+	game.WordCount = 0
 	// not pasing *game because game is already a pointer
 	game.Scenes = []Scene{getStartScene(game, true)}
 	game.Scenes = append(game.Scenes, getMainScene(game, false))
@@ -162,34 +175,40 @@ func getStartScene(game *Game, active bool) Scene {
 
 func getMainScene(game *Game, active bool) Scene {
 	variety, value := data.GetNoun()
+	game.WordCount = 1
+
+	componentList := []component.Component{
+		component.NewBackground("./assets/images/Stall/bg_blue.png"),
+		component.NewMountian(260.0, 800, 0.80),
+		component.NewTree(272, 0.5, 0.18, 800, 60, 0.87),
+		component.NewTree(275, 0.3, 0.3, 800, 80, 0.88),
+		component.NewMountian(335.0, 800, 1),
+		component.NewTree(285, 0.0, 0.45, 800, 120, 0.90),
+		component.NewWave(true, "water2", 60, 0.4, -1, 210, 0.15, 25),
+		component.NewfloatyWord(&game.Lives, &game.Score, 800, 30, &game.Armed, variety, value), //TODO cleanup pass game pointer once
+		component.NewWave(false, "water1"),
+		component.NewTable(),
+		component.NewCurtain(helper.RIGHT),
+		component.NewCurtain(helper.LEFT),
+		component.NewCurtain(helper.TOP),
+
+		component.NewAmmo(515, 10.0, 7, &game.Lives),
+		component.NewScoreboard(&game.Lives, &game.Score), //TODO cleanup pass game pointer once
+		component.NewButton(200.00, helper.RED, &game.Armed),
+		component.NewButton(350.00, helper.BLUE, &game.Armed),
+		component.NewButton(515.00, helper.GREEN, &game.Armed),
+
+		component.NewCrosshair(&game.Armed),
+	}
+
+	newComponents := make([]component.Component, len(componentList), cap(componentList)+10) // Added buffer capacity for aditional elements
+	copy(newComponents, componentList)
 
 	// NOTE Comoponents are drawn stacked on each other, initialization order matters.
 	return Scene{
-		Name:   "main",
-		Active: active,
-		components: []component.Component{
-			component.NewBackground("./assets/images/Stall/bg_blue.png"),
-			component.NewMountian(260.0, 800, 0.80),
-			component.NewTree(272, 0.5, 0.18, 800, 60, 0.87),
-			component.NewTree(275, 0.3, 0.3, 800, 80, 0.88),
-			component.NewMountian(335.0, 800, 1),
-			component.NewTree(285, 0.0, 0.45, 800, 120, 0.90),
-			component.NewWave(true, "water2", 60, 0.4, -1, 210, 0.15, 25),
-			component.NewfloatyWord(&game.Lives, &game.Score, 800, 30, &game.Armed, variety, value), //TODO cleanup pass game pointer once
-			component.NewWave(false, "water1"),
-			component.NewTable(),
-			component.NewCurtain(helper.RIGHT),
-			component.NewCurtain(helper.LEFT),
-			component.NewCurtain(helper.TOP),
-
-			component.NewAmmo(515, 10.0, 7, &game.Lives),
-			component.NewScoreboard(&game.Lives, &game.Score), //TODO cleanup pass game pointer once
-			component.NewButton(200.00, helper.RED, &game.Armed),
-			component.NewButton(350.00, helper.BLUE, &game.Armed),
-			component.NewButton(515.00, helper.GREEN, &game.Armed),
-
-			component.NewCrosshair(&game.Armed),
-		},
+		Name:       "main",
+		Active:     active,
+		components: newComponents,
 	}
 }
 
