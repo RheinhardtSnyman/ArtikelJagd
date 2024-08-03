@@ -49,7 +49,7 @@ const (
 	maxY     = 285
 )
 
-const debouncer = 100 * time.Millisecond
+const debouncer = 800 * time.Millisecond
 
 func init() {
 	var err error

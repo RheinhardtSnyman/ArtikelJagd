@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"slices"
+	"sync"
 	"time"
 
 	component "github.com/RheinhardtSnyman/ArtikelJagd/internal/components"
@@ -16,6 +17,7 @@ type Scene struct {
 	Name       string
 	Active     bool
 	components []component.Component
+	mu         sync.Mutex
 }
 
 type Game struct {
@@ -27,7 +29,7 @@ type Game struct {
 	WordCount   int
 }
 
-const Debouncer = 500 * time.Millisecond
+const Debouncer = 800 * time.Millisecond
 
 const (
 	defualtScore = 0
@@ -35,8 +37,12 @@ const (
 	defualtLives = 3
 )
 
+const (
+	wordMax  = 5
+	addIndex = 8
+)
+
 func SetScene(game *Game, name string) {
-	fmt.Printf("Set Scene %s\n", name)
 	ebiten.SetCursorMode(ebiten.CursorModeVisible)
 	for idx, scene := range game.Scenes {
 		if scene.Name == name {
@@ -53,6 +59,7 @@ func SetScene(game *Game, name string) {
 func (game *Game) Update() error {
 	for _, scene := range game.Scenes {
 		if scene.Active {
+			var newComponents []component.Component
 			for idx, cmpt := range scene.components {
 				if err := cmpt.Update(); err != nil {
 					log.Fatal(err)
@@ -65,21 +72,25 @@ func (game *Game) Update() error {
 				}
 
 				switch scene.Name {
-				case "main": //TODO multiple words should be added on screen with variance
+				case "main":
 					if game.Lives < 0 {
 						SetScene(game, "end")
 						break
 					}
 					// If floatyword component is not on screen, remove it and add new floatyword component in correct z index.
 					if !cmpt.OnScreen() {
+						scene.mu.Lock()
 						scene.components = append(scene.components[:idx], scene.components[idx+1:]...)
-						addFloatyWord(game, scene, idx)
-						game.WordCount += 1
-						if game.WordCount < 6 {
-							go func(idx int) { // Go rutine
+						newComponents = addFloatyWord(game, scene)
+						game.WordCount++
+						scene.mu.Unlock()
+						if game.WordCount <= wordMax {
+							go func() { // Go rutine
 								time.Sleep(3 * time.Second) // Will only pause this go rutine
-								addFloatyWord(game, scene, idx)
-							}(idx)
+								scene.mu.Lock()
+								newComponents = addFloatyWord(game, scene)
+								scene.mu.Unlock()
+							}()
 						}
 					}
 				case "start":
@@ -93,15 +104,18 @@ func (game *Game) Update() error {
 					}
 				}
 			}
+			scene.mu.Lock()
+			scene.components = newComponents
+			scene.mu.Unlock()
 		}
 	}
 	return nil
 }
 
-func addFloatyWord(game *Game, scene Scene, idx int) {
+func addFloatyWord(game *Game, scene Scene) []component.Component {
 	variety, value := data.GetNoun()
 	newComponent := component.NewfloatyWord(&game.Lives, &game.Score, 800, 30, &game.Armed, variety, value)
-	scene.components = slices.Insert(scene.components, idx+1, newComponent)
+	return slices.Insert(scene.components, addIndex, newComponent)
 }
 
 // Part of game loop inicialized in Run()
@@ -179,10 +193,10 @@ func getMainScene(game *Game, active bool) Scene {
 
 	componentList := []component.Component{
 		component.NewBackground("./assets/images/Stall/bg_blue.png"),
-		component.NewMountian(260.0, 800, 0.80),
+		component.NewMountain(260.0, 800, 0.80),
 		component.NewTree(272, 0.5, 0.18, 800, 60, 0.87),
 		component.NewTree(275, 0.3, 0.3, 800, 80, 0.88),
-		component.NewMountian(335.0, 800, 1),
+		component.NewMountain(335.0, 800, 1),
 		component.NewTree(285, 0.0, 0.45, 800, 120, 0.90),
 		component.NewWave(true, "water2", 60, 0.4, -1, 210, 0.15, 25),
 		component.NewfloatyWord(&game.Lives, &game.Score, 800, 30, &game.Armed, variety, value), //TODO cleanup pass game pointer once
@@ -191,14 +205,18 @@ func getMainScene(game *Game, active bool) Scene {
 		component.NewCurtain(helper.RIGHT),
 		component.NewCurtain(helper.LEFT),
 		component.NewCurtain(helper.TOP),
-
 		component.NewAmmo(515, 10.0, 7, &game.Lives),
 		component.NewScoreboard(&game.Lives, &game.Score), //TODO cleanup pass game pointer once
 		component.NewButton(200.00, helper.RED, &game.Armed),
 		component.NewButton(350.00, helper.BLUE, &game.Armed),
 		component.NewButton(515.00, helper.GREEN, &game.Armed),
-
 		component.NewCrosshair(&game.Armed),
+
+		// TODO add more capacity to component slice, difficult to modify slice in draw/update rutine loops
+		component.NewEmpty(),
+		component.NewEmpty(),
+		component.NewEmpty(),
+		component.NewEmpty(),
 	}
 
 	newComponents := make([]component.Component, len(componentList), cap(componentList)+10) // Added buffer capacity for aditional elements

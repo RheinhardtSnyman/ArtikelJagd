@@ -8,7 +8,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
-type mountian struct {
+type mountain struct {
 	imgs  [2]*ebiten.Image
 	y     float64
 	combo []int
@@ -23,7 +23,7 @@ func getRange(w int, count int, imgW int) []int {
 	return imgCombo
 }
 
-func NewMountian(y float64, w int, alpha float32) Component {
+func NewMountain(y float64, w int, alpha float32) Component {
 	imgUrls := []string{"./assets/images/Stall/grass1.png",
 		"./assets/images/Stall/grass2.png"}
 
@@ -36,7 +36,7 @@ func NewMountian(y float64, w int, alpha float32) Component {
 		}
 	}
 
-	return &mountian{
+	return &mountain{
 		imgs:  imgs,
 		y:     y,
 		combo: getRange(w, len(imgUrls), 132),
@@ -44,28 +44,28 @@ func NewMountian(y float64, w int, alpha float32) Component {
 	}
 }
 
-func (mountian *mountian) Draw(screen *ebiten.Image) error {
+func (mountain *mountain) Draw(screen *ebiten.Image) error {
 	screenX := screen.Bounds().Dx()
 
 	idx := 0
-	curImg := mountian.imgs[mountian.combo[idx]]
+	curImg := mountain.imgs[mountain.combo[idx]]
 
 	for x := 0; x < screenX; x += curImg.Bounds().Dx() {
 		options := &ebiten.DrawImageOptions{}
-		options.ColorScale.ScaleAlpha(mountian.alpha)
-		options.GeoM.Translate(float64(x), mountian.y)
+		options.ColorScale.ScaleAlpha(mountain.alpha)
+		options.GeoM.Translate(float64(x), mountain.y)
 		screen.DrawImage(curImg, options)
-		curImg = mountian.imgs[mountian.combo[idx]]
+		curImg = mountain.imgs[mountain.combo[idx]]
 		idx++
 	}
 
 	return nil
 }
 
-func (mountian *mountian) Update() error {
+func (mountain *mountain) Update() error {
 	return nil
 }
 
-func (mountian *mountian) OnScreen() bool {
+func (mountain *mountain) OnScreen() bool {
 	return true
 }
