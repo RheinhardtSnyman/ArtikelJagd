@@ -50,8 +50,16 @@ Demo mode shows a proof of concept in simple English where the objective is to m
 
 To run the game in demo mode, use:
 
+_Windows_
+
 ```bash
 go run .\cmd\ArtikelJagd\main.go -demo
+```
+
+_Ubuntu_
+
+```bash
+go run ./cmd/ArtikelJagd/main.go -demo
 ```
 
 ### Normal Mode
@@ -60,6 +68,14 @@ In normal mode, the game is in German.
 
 To run the game in normal mode, use:
 
+_Windows_
+
 ```bash
 go run .\cmd\ArtikelJagd\main.go
+```
+
+_Ubuntu_
+
+```bash
+go run ./cmd/ArtikelJagd/main.go
 ```
