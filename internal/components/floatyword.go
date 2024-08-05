@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"image/color"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/RheinhardtSnyman/ArtikelJagd/internal/helper"
@@ -27,6 +28,7 @@ type word struct {
 
 type floatyWord struct {
 	img         image
+	scale       float64
 	word        word
 	aniX        animation
 	aniY        animation
@@ -61,7 +63,7 @@ func init() {
 
 func NewfloatyWord(lives *int, score *int, aniX, aniY float64, armed *int, variety int, val string) Component {
 
-	img, _, err := ebitenutil.NewImageFromFile("./assets/images/Stall/cloud2.png")
+	img, _, err := ebitenutil.NewImageFromFile("./assets/images/Stall/cloud" + strconv.Itoa(int(helper.GetRandom(1, 5))) + ".png")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -95,11 +97,12 @@ func NewfloatyWord(lives *int, score *int, aniX, aniY float64, armed *int, varie
 		score: score,
 		armed: armed,
 		lives: lives,
+		scale: 1.0,
 	}
 
 }
 
-func (floatyWord floatyWord) Draw(screen *ebiten.Image) error {
+func (floatyWord *floatyWord) Draw(screen *ebiten.Image) error {
 	// word
 	mplusNormalFont := &text.GoTextFace{
 		Source: faceSource,
@@ -116,10 +119,10 @@ func (floatyWord floatyWord) Draw(screen *ebiten.Image) error {
 	// Up scale background image to to min ratio to word width
 	ratio := imgX / wordWidth
 	if ratio < minRatio {
-		scale := 1.0 + minRatio - ratio
-		opImg.GeoM.Scale(scale, scale)
-		imgX = imgX * scale
-		imgY = imgY * scale
+		floatyWord.scale = 1.0 + minRatio - ratio
+		opImg.GeoM.Scale(floatyWord.scale, floatyWord.scale)
+		imgX = imgX * floatyWord.scale
+		imgY = imgY * floatyWord.scale
 	}
 	opImg.GeoM.Translate(floatyWord.x, floatyWord.y)
 
@@ -164,13 +167,12 @@ func (floatyWord *floatyWord) Update() error {
 }
 
 func shot(floatyWord *floatyWord) {
-	boxMinX := floatyWord.x
-	boxMaxX := boxMinX + floatyWord.img.x
-	boxMinY := floatyWord.y
-	boxMaxY := boxMinY + floatyWord.img.y
-
 	x, y := ebiten.CursorPosition()
 	if *floatyWord.armed != helper.NONE {
+		boxMinX := floatyWord.x
+		boxMaxX := boxMinX + floatyWord.img.x*floatyWord.scale
+		boxMinY := floatyWord.y
+		boxMaxY := boxMinY + floatyWord.img.y*floatyWord.scale
 		if x > int(boxMinX) && x < int(boxMaxX) && y > int(boxMinY) && y < int(boxMaxY) {
 			// Got a hit
 			if *floatyWord.armed == floatyWord.word.variety {

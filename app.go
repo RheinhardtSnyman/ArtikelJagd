@@ -16,7 +16,7 @@ import (
 type Scene struct {
 	Name       string
 	Active     bool
-	components []component.Component
+	Components []component.Component
 	mu         sync.Mutex
 }
 
@@ -38,7 +38,7 @@ const (
 )
 
 const (
-	wordMax  = 5
+	wordMax  = 4
 	addIndex = 8
 )
 
@@ -60,7 +60,7 @@ func (game *Game) Update() error {
 	for _, scene := range game.Scenes {
 		if scene.Active {
 			var newComponents []component.Component
-			for idx, cmpt := range scene.components {
+			for idx, cmpt := range scene.Components {
 				if err := cmpt.Update(); err != nil {
 					log.Fatal(err)
 				}
@@ -80,15 +80,18 @@ func (game *Game) Update() error {
 					// If floatyword component is not on screen, remove it and add new floatyword component in correct z index.
 					if !cmpt.OnScreen() {
 						scene.mu.Lock()
-						scene.components = append(scene.components[:idx], scene.components[idx+1:]...)
-						newComponents = addFloatyWord(game, scene)
+						// Remove floatyword
+						scene.Components = append(scene.Components[:idx], scene.Components[idx+1:]...)
+						// Add new floatyword
+						newComponents = AddFloatyWord(game, scene)
 						game.WordCount++
 						scene.mu.Unlock()
+						// Add additional floatyword
 						if game.WordCount <= wordMax {
 							go func() { // Go rutine
-								time.Sleep(3 * time.Second) // Will only pause this go rutine
+								time.Sleep(time.Duration(helper.GetRandom(2, 6)) * time.Second) // Will only pause this go rutine
 								scene.mu.Lock()
-								newComponents = addFloatyWord(game, scene)
+								newComponents = AddFloatyWord(game, scene)
 								scene.mu.Unlock()
 							}()
 						}
@@ -105,17 +108,17 @@ func (game *Game) Update() error {
 				}
 			}
 			scene.mu.Lock()
-			scene.components = newComponents
+			scene.Components = newComponents
 			scene.mu.Unlock()
 		}
 	}
 	return nil
 }
 
-func addFloatyWord(game *Game, scene Scene) []component.Component {
+func AddFloatyWord(game *Game, scene Scene) []component.Component {
 	variety, value := data.GetNoun()
 	newComponent := component.NewfloatyWord(&game.Lives, &game.Score, 800, 30, &game.Armed, variety, value)
-	return slices.Insert(scene.components, addIndex, newComponent)
+	return slices.Insert(scene.Components, addIndex, newComponent)
 }
 
 // Part of game loop inicialized in Run()
@@ -124,7 +127,7 @@ func addFloatyWord(game *Game, scene Scene) []component.Component {
 func (game *Game) Draw(screen *ebiten.Image) {
 	for _, scene := range game.Scenes {
 		if scene.Active {
-			for _, component := range scene.components {
+			for _, component := range scene.Components {
 				if err := component.Draw(screen); err != nil {
 					log.Fatal(err)
 				}
@@ -150,11 +153,13 @@ func inicializeScenes(game *Game) {
 }
 
 // Start initializes starting game components
-func Start() *Game {
+func Start(flagDemoMode *bool) *Game {
 
 	fmt.Println("Starting")
 
-	if helper.Demo {
+	if *flagDemoMode {
+		fmt.Printf("Demo Mode %v\n", *flagDemoMode)
+		helper.DemoMode = true
 		helper.BTN_TEXT[helper.RED] = "Red"
 		helper.BTN_TEXT[helper.BLUE] = "Blue"
 		helper.BTN_TEXT[helper.GREEN] = "Grn"
@@ -178,7 +183,7 @@ func getStartScene(game *Game, active bool) Scene {
 	return Scene{
 		Name:   "start",
 		Active: active,
-		components: []component.Component{
+		Components: []component.Component{
 			component.NewBackground("./assets/images/Stall/bg_green.png"),
 			component.NewTable(),
 			component.NewCurtain(helper.TOP),
@@ -226,7 +231,7 @@ func getMainScene(game *Game, active bool) Scene {
 	return Scene{
 		Name:       "main",
 		Active:     active,
-		components: newComponents,
+		Components: newComponents,
 	}
 }
 
@@ -235,7 +240,7 @@ func getEndScene(game *Game, active bool) Scene {
 	return Scene{
 		Name:   "end",
 		Active: active,
-		components: []component.Component{
+		Components: []component.Component{
 			component.NewBackground("./assets/images/Stall/bg_red.png"),
 			component.NewTable(),
 			component.NewCurtain(helper.TOP),

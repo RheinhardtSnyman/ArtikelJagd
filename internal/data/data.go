@@ -37,7 +37,7 @@ func demoGetRandomKeyValue() (int, string) {
 // This function returns a noun and its matching gender article die der das
 func GetNoun() (int, string) { // Note only func that start with CAPITAL LETTER is automatically exported and public
 
-	if helper.Demo {
+	if helper.DemoMode {
 		return demoGetRandomKeyValue()
 	}
 

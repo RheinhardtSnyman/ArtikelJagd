@@ -16,7 +16,7 @@ const (
 	BOTTOM
 )
 
-var Demo = true
+var DemoMode = false
 
 var FONT_LARGE = 110
 var TITLE_TEXT = "ArtikelJagd"
