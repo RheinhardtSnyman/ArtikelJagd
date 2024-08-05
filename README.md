@@ -20,6 +20,22 @@ ArtikelJagd(hunt for articles) is a Go-based game using the Ebiten game library.
 
    Ensure you have Go installed on your machine. If not, download and install it from [here](https://go.dev/doc/install).
 
+   _Ubuntu_
+
+   Go instalation
+
+   ```bash
+   sudo snap install go --classic && export PATH=$PATH:/usr/local/go/bin
+   ```
+
+   Ebiten dependencies
+
+   ```bash
+    sudo apt-get install libgl1-mesa-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxrandr-dev libxxf86vm-dev
+   ```
+
+   Install the dependencies
+
    ```bash
    go mod tidy
    ```
